@@ -1,0 +1,78 @@
+{% extends 'headerbar.html' %}
+{% load staticfiles %} {% block main_content %}
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+         <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-header">
+                             <small>基于web2.0性教育系统</small>
+                        </h1>
+						<ol class="breadcrumb">
+  <li><a href="/">首页</a></li>
+  <li><a href="/sent_article">文章发表</a></li>
+  <li><a href="/twjx">图文教育</a></li>
+  <li class="active">视频教育</li>
+
+</ol>
+                    </div>
+                </div>
+                <div class="row">
+
+                     <div class="col-md-9" >
+
+                    <p  style="color: #319DB5" >{{ title }}</p>
+                    </div>
+                    <div class="col-xs-12" >
+
+                        <div style="border: 2px solid #dddddd;">
+                        <iframe class="myvedio" style="height: 450px" width=100% src="{{ url }}" frameborder="allowfullscreen"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    {% load staticfiles %}
+    <script src="{% static "assets/js/jquery-1.10.2.js"  %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static "assets/js/bootstrap.min.js"  %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static "assets/js/jquery.metisMenu.js"  %}"></script>
+    <!-- Morris Chart Js -->
+
+
+
+    <!-- Custom Js -->
+    <script src="{% static "assets/js/custom-scripts.js"  %}"></script>
+
+
+<script>
+    var system ={};
+var p = navigator.platform;
+system.win = p.indexOf("Win") == 0;
+system.mac = p.indexOf("Mac") == 0;
+system.x11 = (p == "X11") || (p.indexOf("Linux") == 0);
+if(system.win||system.mac||system.xll){//如果是电脑跳转到
+
+       }else{  //如果是手机,跳转到
+             $('.myvedio').css('height','250px');
+       }
+</script>
+
+
+
+{% endblock %}

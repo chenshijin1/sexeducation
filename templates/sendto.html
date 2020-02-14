@@ -1,0 +1,88 @@
+{% extends 'headerbar.html' %}
+{% load staticfiles %} {% block main_content %}
+    <style>
+
+    .modal-backdrop{
+         display: none;
+    }
+    </style>
+
+
+
+
+
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+                  <div class="row">
+
+                      <div class="col-md-7">
+                           给{{ tonickname }}留言<br>
+                          <div >
+                              <textarea  class="content" name="desc" cols="60" rows="10"></textarea>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-2" style="margin-top:30px">
+                        <button  type="button" class="btn btn-primary sent_button">发送</button>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    {% load staticfiles %}
+    <script src="{% static "assets/js/jquery-1.10.2.js" %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static "assets/js/jquery.metisMenu.js" %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static "assets/js/morris/raphael-2.1.0.min.js" %}"></script>
+    <script src="{% static "assets/js/morris/morris.js" %}"></script>
+
+
+
+
+    <!-- Custom Js -->
+    <script src="{% static "assets/js/custom-scripts.js" %}"></script>
+
+<script>
+        $('.sent_button').click(function () {
+             $.ajax({
+             url:'/sendto/',
+             type:'POST',
+             data:{'content':$('.content').val(),"from_id":{{ from_id }},"to_id":{{ to_id  }}},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+                 if(obj.state){
+                    alert("留言成功");
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+                /** var obj=JSON.parse(data)
+                 if(obj.state){
+                    alert("名字是"+obj.name+"密码是"+obj.password);
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+                 //alert("名字是"+$('#name').val()+"密码是"+$('#pw').val());
+                 **/
+                 }
+
+
+         })
+         });
+    </script>
+
+{% endblock %}

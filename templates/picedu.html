@@ -1,0 +1,130 @@
+{% extends 'headerbar.html' %}
+{% load staticfiles %} {% block main_content %}
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+
+
+
+
+
+
+
+
+
+
+      <h2>图文教育</h2>
+                <br>
+                <br>
+
+       <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.css">
+
+       <div class="ui hidden divider"></div>
+                <div class="ui grid" style="width: 90%">
+
+
+                    <div class="five wide column">
+        <div class="ui card">
+            <a class="image" href="/twjx/manbody/">
+{#                {% thumbnail item.cover "300x200" crop="center" as im %}#}
+                <img  style="width: 100%;height: 130px"  class="ui image" src="{% static "assets/img/sexedu/man.jpg" %}">
+{#                {% empty %}#}
+{#                {% endthumbnail %}#}
+{#                <i style="    position: absolute;left: 1.0rem;bottom: 1.0rem;color: #0285c8;" class="large play icon v-play-icon"></i>#}
+            </a>
+            <div class="content">
+                <div>
+                    <span style="font-weight: bold">男生</span>
+                </div>
+{#                <a class="header" href="{% url 'video:detail' item.pk %}">{{ item.title }}</a>#}
+                <div class="meta">
+                              </div>
+                <div class="description">
+{#                    {{ item.view_count}}#}
+
+                 <i class="fa fa-mars" style="color: blue" ></i>
+                    <span style="float: right" class="date"><i class="fa fa-clock-o"></i>2019-02-17</span>
+
+                </div>
+{#                <div>{{ video.desc }}</div>#}
+                <div><i class="fa fa-user fa-fw"></i>爬取于：http://www.zanzu.de</div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+                    <div class="five wide column">
+        <div class="ui card">
+            <a class="image" href="/twjx/womanbody/">
+{#                {% thumbnail item.cover "300x200" crop="center" as im %}#}
+                <img  style="width: 100%;height: 130px"  class="ui image" src="{% static "assets/img/sexedu/women.jpg" %}">
+{#                {% empty %}#}
+{#                {% endthumbnail %}#}
+{#                <i style="    position: absolute;left: 1.0rem;bottom: 1.0rem;color: #0285c8;" class="large play icon v-play-icon"></i>#}
+            </a>
+            <div class="content">
+                <div>
+                    <span style="font-weight: bold">女生</span>
+                </div>
+{#                <a class="header" href="{% url 'video:detail' item.pk %}">{{ item.title }}</a>#}
+                <div class="meta">
+                              </div>
+                <div class="description">
+{#                    {{ item.view_count}}#}
+
+                 <i class="fa fa-venus" style="color: deeppink"></i>
+                    <span style="float: right" class="date"><i class="fa fa-clock-o"></i>2019-02-17</span>
+
+                </div>
+{#                <div>{{ video.desc }}</div>#}
+                <div><i class="fa fa-user fa-fw"></i>爬取于：http://www.zanzu.de</div>
+            </div>
+        </div>
+    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <script src="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.js"></script>
+
+
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    {% load staticfiles %}
+    <script src="{% static "assets/js/jquery-1.10.2.js" %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static "assets/js/jquery.metisMenu.js" %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static "assets/js/morris/raphael-2.1.0.min.js" %}"></script>
+    <script src="{% static "assets/js/morris/morris.js" %}"></script>
+
+
+
+
+    <!-- Custom Js -->
+    <script src="{% static "assets/js/custom-scripts.js" %}"></script>
+
+
+{% endblock %}

@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+     {% load staticfiles %}
+    <meta charset="UTF-8">
+    <title>基于web2.0性教育系统</title>
+
+     <link href="{% static "mainpage/weixin.sogou.com_mainpage.css"  %}" rel="stylesheet" />
+     <link href="{% static "assets/css/bootstrap.css"  %}" rel="stylesheet" />
+      <link href="{% static "assets/css/font-awesome.css"  %}"  rel="stylesheet" />
+     <style>
+        .top_toolbars a{
+            color: #6A89C0;
+        }
+    </style>
+
+
+       <style>
+          .txt_box img{
+              width: 100%;
+
+          }
+
+
+
+        .page{
+            display: inline-block;
+            padding: 5px;
+            background-color: #4cae4c;
+            margin: 5px;
+
+        }
+
+
+
+        .isactive{
+            background-color: #5bc0de;
+        }
+        #page-wrapper{
+    overflow-x: hidden;
+    }
+
+
+         *{ margin:0; padding:0; list-style:none;outline-style: none;}
+
+    .w500{
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        overflow: hidden;}
+    .list{}
+    .list li{
+        padding:10px 0;
+        border-bottom:1px solid #ccc;
+        overflow: hidden;
+        line-height: 180%;
+    }
+    .send{padding:10px 0;}
+    .send textarea{
+        width: 100%;
+        border-radius:5px;
+        padding: 5px}
+    .send a.btn{
+        padding:5px 20px;
+        display: block;
+        color: #fff;
+        background: #ff4c51;
+        border-radius: 3px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+        float: right;
+        margin-top: 5px;
+
+    }
+    .send a.btn:hover{
+        background: #c53d41;
+        -webkit-transition:all 0.2s linear;
+        -moz-transition:all 0.2s linear;
+        -ms-transition:all 0.2s linear;
+        -o-transition:all 0.2s linear;
+        transition:all 0.2s linear;
+    }
+    .send .faces{
+        width: 25px;
+        height:25px;
+        display: block;
+        float: left;
+        background-image: url(/static/image/faces.png) ;
+        background-position: 0 0;
+        margin-right:5px;
+        margin-top:5px;
+    }
+    .send .on{
+        background-position: left bottom;
+    }
+    .showit{
+        display: none;
+    }
+    .face{
+        overflow: hidden;
+        width: 97%;
+        }
+    .face li{
+        width: 23px;
+        height: 23px;
+        margin:4px;
+        float: left;
+    }
+    #content {
+        width: 98%;
+        height: 150px;
+        float: left;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+        padding: 3px 10px;
+        overflow:scroll;
+    }
+
+
+     .plq{border: 2px solid #dddddd; }
+
+
+
+
+    </style>
+    <script src="{% static "assets/js/jquery-1.11.3.min.js" %}"></script>
+
+    <script type="text/javascript">
+        //测试用的数据，这里可以用AJAX获取服务器数据
+        var test_list = [""];
+        var old_value = "";
+        var highlightindex = -1;   //高亮
+        //自动完成
+        function AutoComplete(auto, search, mylist) {
+            if ($("#" + search).val() != old_value || old_value == "") {
+                var autoNode = $("#" + auto);   //缓存对象（弹出框）
+                var carlist = new Array();
+                var n = 0;
+                old_value = $("#" + search).val();
+                for (i in mylist) {
+                    if (mylist[i].indexOf(old_value) >= 0) {
+                        carlist[n++] = mylist[i];
+                    }
+                }
+                if (carlist.length == 0) {
+                    autoNode.hide();
+                    return;
+                }
+                autoNode.empty();  //清空上次的记录
+                for (i in carlist) {
+                    var wordNode = carlist[i];   //弹出框里的每一条内容
+                    var newDivNode = $("<div>").attr("id", i);    //设置每个节点的id值
+                    newDivNode.attr("style", "font:14px/25px arial;height:25px;padding:0 8px;cursor: pointer;background-color: #FFFFFF;");
+                    newDivNode.html(wordNode).appendTo(autoNode);  //追加到弹出框
+                    //鼠标移入高亮，移开不高亮
+                    newDivNode.mouseover(function () {
+                        if (highlightindex != -1) {        //原来高亮的节点要取消高亮（是-1就不需要了）
+                            autoNode.children("div").eq(highlightindex).css("background-color", "white");
+                        }
+                        //记录新的高亮节点索引
+                        highlightindex = $(this).attr("id");
+                        $(this).css("background-color", "#ebebeb");
+                    });
+                    newDivNode.mouseout(function () {
+                        $(this).css("background-color", "white");
+                    });
+                    //鼠标点击文字上屏
+                    newDivNode.click(function () {
+                        //取出高亮节点的文本内容
+                        var comText = autoNode.hide().children("div").eq(highlightindex).text();
+                        highlightindex = -1;
+                        //文本框中的内容变成高亮节点的内容
+                        $("#" + search).val(comText);
+                    })
+                    if (carlist.length > 0) {    //如果返回值有内容就显示出来
+                        autoNode.show();
+                    } else {               //服务器端无内容返回 那么隐藏弹出框
+                        autoNode.hide();
+                        //弹出框隐藏的同时，高亮节点索引值也变成-1
+                        highlightindex = -1;
+                    }
+                }
+            }
+            //点击页面隐藏自动补全提示框
+            document.onclick = function (e) {
+                var e = e ? e : window.event;
+                var tar = e.srcElement || e.target;
+                if (tar.id != search) {
+                    if ($("#" + auto).is(":visible")) {
+                        $("#" + auto).css("display", "none")
+                    }
+                }
+            }
+        }
+        $(function () {
+            old_value = $("#search_text").val();
+            $("#search_text").focus(function () {
+                if ($("#search_text").val() == "") {
+                    AutoComplete("auto_div", "search_text", test_list);
+                }
+            });
+            $("#search_text").keyup(function () {
+
+
+                $.ajax({
+             url:'/gettip/',
+             type:'POST',
+             data:{'key':$('#search_text').val()},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+
+                     if(obj.state){
+                    //alert("评论成功");
+                   // location.reload();
+                         var rs=obj.result
+                         test_list=rs.split("//")
+                         //test_list[0]="aa";
+                         //test_list[1]=rl;
+                         if(test_list.length>10){
+                             var ttlist=[];
+                             for(i=0;i<10;i++){
+                                 ttlist[i]=test_list[i];
+                             }
+                             AutoComplete("auto_div", "search_text", ttlist);
+                         }else {
+                              AutoComplete("auto_div", "search_text", test_list);
+                         }
+
+
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+
+                 }
+
+
+
+
+
+         });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                //AutoComplete("auto_div", "search_text", test_list);
+            });
+        });
+    </script>
+
+
+
+
+</head>
+<body>
+
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+                <div class="row">
+                      <div class="col-xs-8  col-xs-offset-1" ><p style="font-size:30px; ">用户登录</p></div>
+                  </div>
+            </div>
+
+           <div id="">
+
+               <div >
+                   <div class="modal-body">
+
+
+                  <div class="row">
+                      <div class="col-xs-8  col-xs-offset-1" style="margin-top: 30px">
+                      账号<input  class="form-control" type="text" id="username" placeholder="请输入账号" >
+                      </div>
+                  </div>
+                   <div class="row">
+                      <div class="col-xs-8 col-xs-offset-1" style="margin-top: 30px">
+                      密码<input  class="form-control" type="password" id="password" placeholder="请输入密码" >
+                      </div>
+                  </div>
+
+                      <div class="row">
+                      <div class="col-xs-8 col-xs-offset-1" style="margin-top: 30px">
+                     <div class="input">
+   <input id="t1" type="text" name="u" placeholder="验证码" onblur="but()" />
+   <span id="discode"></span>
+   <input type="button" value="换一换" class="c" style="height:20px;"onClick="createCode()">
+   </div>
+                      </div>
+                  </div>
+
+                   </div>
+                   <div class="modal-footer">
+                   <div class="row">
+                      <div class="col-xs-6 col-xs-offset-2" style="margin-top: 30px">
+                      <input class="btn btn-primary subt"  value="登录" ><span class="errorspan"></span>
+                      </div>
+
+                  </div>
+                     <div class="row">
+                      <div class="col-xs-4 col-xs-offset-3" style="margin-top: 5px">
+                      <a href="/register/" style="color: red;">没有账户账号我要注册</a>
+                      </div>
+                  </div>
+                   </div>
+                  </div>
+
+
+
+
+                </div>
+
+
+
+                </div>
+
+         </div>
+             <script language="javascript">
+var couldlogin=0;
+var code; //在全局 定义验证码
+function createCode()
+{ //创建验证码函数
+ code = "";
+ var codeLength =4;//验证码的长度
+ var selectChar = new Array(0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f','g','h','i','j','k',
+  'l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');//所有候选组成验证码的字符，当然也可以用中文的
+ for(var i=0;i<codeLength;i++)
+ {
+ var charIndex =Math.floor(Math.random()*36);
+ code +=selectChar[charIndex];
+ }
+// 设置验证码的显示样式，并显示
+ document.getElementById("discode").style.fontFamily="Fixedsys"; //设置字体
+ document.getElementById("discode").style.letterSpacing="5px"; //字体间距
+ document.getElementById("discode").style.color="#0ab000"; //字体颜色
+ document.getElementById("discode").innerHTML=code; // 显示
+}
+function but()
+{//验证验证码输入是否正确
+ var val1=document.getElementById("t1").value;
+ var val2=code;
+ if(val1!=val2){
+
+  couldlogin=0;
+ document.getElementById('t1').value="";
+  }else{
+  	couldlogin=1;
+
+  }
+ }
+
+
+ createCode()
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               <script>
+                   $('.subt').click(function () {
+                       if(couldlogin==0){
+                           alert("验证码错误");
+                       }else {
+
+                             $.ajax({
+             url:'/login/',
+             type:'POST',
+             data:{'username':$('#username').val(),'password':$("#password").val()},
+             success:function (data) {
+                 //alert(data);
+                 var obj=JSON.parse(data);
+                 if(obj.message=="登录成功"){
+                      $('.errorspan').html(obj.message)
+
+                    //alert("登录成功");
+                    location.reload();
+                 }
+                 else {
+                    $('.errorspan').html(obj.message)
+
+                 }
+
+
+
+
+                 }
+
+
+         })
+                  }
+                   });
+
+
+               </script>
+
+
+           </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="top_toolbars">
+        <ul >
+                  <li>
+                    <a href="/">首页</a>
+                </li>
+                <li>
+                    <a href="/">家长</a>
+                </li>
+                <li>
+                    <a href="/videolist">小盆友</a>
+                </li>
+                <li>
+                    <a href="/twjx">青少年</a>
+                </li>
+                <li>
+                    <a href="/sent_article">我要说话</a>
+                </li>
+                <li>
+                    <a href="/sendmessage/">给管理员留言</a>
+                </li>
+            </ul>
+        </div>
+ <div id="login_con" style="margin-right: 240px">
+        <a href="/exit">退出登录</a>
+    </div>
+   <div id="login_con" style="margin-right: 160px">
+        <a href="/userinfor/">用户主页</a>
+    </div>
+
+    <div id="login_con" style="margin-right: 70px">
+        <a href="/mymessage">我的消息</a>
+    </div>
+    <div id="login_img" style="position: absolute;right:10px;top: -10px">
+        {{ loginstr |safe}}
+    </div>
+    <div class="middle_bar">
+        <div class="middle_bar_content">
+            <div class="logo">
+                 <img class="logo_img"   src="{% static "mainpage/search.gif" %}"    style="height: 36px;width: 140px"/>
+             </div>
+            <form action="/s/" action="GET">
+                <div id="input_con">
+                    <input type="text"  name="keyword" id="search_text" placeholder="输入关键词" autocomplete="off"    />
+                     <input type="submit" id="search_bt" style="background-color: #FF4E85" value="搜文章" />
+                  </div>
+
+            </form>
+                <div style="margin-left: 20%;z-index: 99">
+     <div id="auto_div" style="z-index: 99;position: absolute;align:left;width:451px;border: 2px solid #FFFFFF;">
+                                </div>
+     </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="wrapper" style="z-index: 1">
+        <div class="main_left">
+            <div class="banners">
+                <img   src="{% static "mainpage/dm2.jpg" %}"   style="width: 640px; height: 340px"/>
+            </div>
+            <div class="tap_box">
+                <div class="tap">
+                    <a href="/">首页</a>
+                    <a href="/readarticle">文章</a>
+                    <a href="/videolist">视频教育</a>
+                    <a href="/twjx">性教育科普</a>
+                    <a href="/sent_article">发表文章</a>
+                    <a href="/sendmessage/">给管理员留言</a>
+
+                </div>
+            </div>
+            <div class="news_box">
+                <ul class="news_list">
+
+
+
+
+                    <li>
+                        <div class="img_box">
+                            <img   src="{% static "mainpage/dm1.jpg" %}"    style="width: 120px;height: 120px" />
+                        </div>
+                        <div class="txt_box">
+                            <h3> {{  article.title }}</h3>
+                            <p style="color: #888;padding-top: 10px;    font-size: 18px;">{{ article.content |safe }}
+                                </p>
+
+                        </div>
+
+                        <div class="txt_info_more">
+                            <a href="#">性教育</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="#">32分钟前</a>
+                        </div>
+                    </li>
+
+
+                </ul>
+                         <p>{{ origin }}</p>
+
+                 <div class="row">
+                 <div class="col-xs-6">
+                    <i class="fa fa-comment-o" aria-hidden="true"  style="float: right;cursor: pointer;"></i>
+
+                 </div>
+                 <div class="col-xs-6">
+             <i class="{{ myclass }}" id="zhan" aria-hidden="true" style="float: right;cursor: pointer;">{{ supportcount }}</i>
+
+                 </div>
+             </div>
+
+
+
+            </div>
+
+           <div class="showit plq" >
+               <p>发表评论</p>
+              <div class="row" >
+                  <div class="col-md-9">
+                <div class="send">
+                      <div id="content"   cols="30" rows="2"  class="idcommment" contenteditable="true"  myid="{{ article.article_id }}">{{ comment_cookie | safe }}</div> <!-- style="display: none;" -->
+                            <a href="javascript:;" class="btn">发布</a>
+                            <a style="border-radius: 15px" href="javascript:;" class='faces on'></a>
+
+                </div>
+                  </div>
+              </div>
+                 <div class="face w500 showit"></div>
+               </div>
+
+
+
+                <div class="commentss">
+                <br>
+                <br>
+                <span style="font-size: 30px">评论区</span>
+                <br>
+                <br>
+                    {% for co in comment %}
+                        <div class="row">
+                          <div class="col-md-12" style="border: 2px solid #dddddd;">
+                        <a href="/user/?user_id={{ co.user_id }}">{{ co.nickname }}</a>
+                        <br>
+                        <div> {{ co.comment_content | safe }}</div>
+                        <br>
+                          </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+
+                  <div style="margin-top: 50px" >
+            <a class="ft_1" href="#">企业推广-关于搜狗-免责声明-意见反馈及投诉-隐私政策</a>
+            <p class="ft_2" >@2017 SOGOU-京ICP证050897号-京公网安备11000002000025</p>
+        </div>
+
+
+
+        </div>
+        <div class="main_right">
+            <div class="aside">
+                <p class="hot_words">搜索热词
+                    <span class="heat">热度</span>
+                </p>
+                <ol class="hot_news">
+                   <li>
+                        <i class="hot_one">1</i>
+                        <a href="/article/?id=12134">如何看待「早恋成风」的现象</a>
+                        <span class="hot_line">
+                            <span style="width: 100%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_two">2</i>
+                        <a href="/article/?id=2">青春期少女应该知道的生理知识</a>
+                        <span class="hot_line">
+                            <span style="width: 93%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_three">3</i>
+                        <a href="/article/?id=49">中国父母对孩子性启蒙的爆笑雷点</a>
+                        <span class="hot_line">
+                            <span style="width: 86%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">4</i>
+                        <a href="/article/?id=63">性启蒙最合适的方式是什么样的？</a>
+                        <span class="hot_line">
+                            <span style="width: 79%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">5</i>
+                        <a href="/article/?id=77">什么时候和孩子谈性时机最好</a>
+                        <span class="hot_line">
+                            <span style="width: 75%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">6</i>
+                        <a href="/article/?id=126">身体发育，你了解多少</a>
+                        <span class="hot_line">
+                            <span style="width: 71%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">7</i>
+                        <a href="/article/?id=157">男孩性别意识早培养</a>
+                        <span class="hot_line">
+                            <span style="width: 65%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">8</i>
+                        <a href="/article/?id=183">青春期有哪些性征</a>
+                        <span class="hot_line">
+                            <span style="width: 55%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">9</i>
+                        <a href="/article/?id=241">遗精的基本常识</a>
+                        <span class="hot_line">
+                            <span style="width: 45%"></span>
+                        </span>
+                    </li>
+                    <li>
+                        <i class="hot_normal">10</i>
+                        <a href="/article/?id=268">少女有哪些性权利？</a>
+                        <span class="hot_line">
+                            <span style="width: 30%"></span>
+                        </span>
+                    </li>
+                </ol>
+            </div>
+    <div class="aside">
+                <p class="tit">编辑精选</p>
+                <ul class="news_list_right">
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm9.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                            <a href="/article/?id=373">  <p>男孩青春期性反应你知道吗？</p></a>
+                            <p class="txt_info_right_more">性教育&nbsp;&nbsp;&nbsp;10月5号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm11.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                           <a href="/article/?id=160"><p>错误的教育法让孩子恐惧性爱</p></a>
+                            <p class="txt_info_right_more">性教育&nbsp;&nbsp;&nbsp;7月4号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm17.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                           <a href="/article/?id=393"> <p>如何判断一个人是否心理成熟？</p></a>
+                            <p class="txt_info_right_more">性教育&nbsp;&nbsp;&nbsp;2月7号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm16.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                           <a href="/article/?id=414"> <p>青春期女生性心理特点</p></a>
+                            <p class="txt_info_right_more">女生&nbsp;&nbsp;&nbsp;3月2号</p>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="aside">
+                <p class="tit">热点文章</p>
+                <ul class="news_list_right">
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm11.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                            <a href="/article/?id=464"> <p>青少年如何正确处理性冲动</p></a>
+                            <p class="txt_info_right_more">青少年&nbsp;&nbsp;&nbsp;11月10号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm12.png" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                            <a href="/article/?id=547"> <p>女生青春期长高方法都有什么？</p></a>
+                            <p class="txt_info_right_more">青春期&nbsp;&nbsp;&nbsp;3月5号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img src="{% static "mainpage/dm13.jpg" %}" style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                            <a href="/article/?id=31">   <p>探究青春期男性生殖器变化</p></a>
+                            <p class="txt_info_right_more">青春期&nbsp;&nbsp;&nbsp;10月14号</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="img_box_right">
+                            <img  src="{% static "mainpage/dm15.jpg" %}"  style="width: 90px;height: 90px" />
+                        </div>
+                        <div class="txt_box_right">
+                            <a href="/article/?id=67">     <p>青春期切忌发生性行为</p></a>
+                            <p class="txt_info_right_more">青春期&nbsp;&nbsp;&nbsp;12月8号</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+
+
+
+
+
+
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    {% load staticfiles %}
+    <script src="{% static "assets/js/jquery-1.10.2.js" %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static "assets/js/jquery.metisMenu.js" %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static "assets/js/emoji-list-with-image.js" %}"></script>
+    <script src="{% static "assets/js/emoji.js" %}"></script>
+    <script src="{% static "assets/js/punycode.min.js" %}"></script>
+
+
+    <!-- Custom Js -->
+    <script src="{% static "assets/js/custom-scripts.js" %}"></script>
+
+ <script>
+     var isopen=0
+     $('.fa-comment-o').click(function () {
+         if(isopen==0){
+          $('.plq').removeClass('showit');
+          isopen=1;
+          }else {
+             $('.plq').addClass('showit');
+             isopen=0;
+         }
+     });
+
+
+
+
+
+
+
+  $('#zhan').click(function () {
+         var z=$("#zhan").attr("class");
+        //alert(z);
+        if(z.indexOf("fa-thumbs-o-up") >= 0){
+        //包含；
+            $.ajax({
+             url:'/zhan/',
+             type:'POST',
+             data:{'add':"1",'article_id':$(".idcommment").attr("myid")},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+                 if(obj.islogin=='True'){
+                     if(obj.state){
+                          $('#zhan').removeClass('fa-thumbs-o-up');
+                          $('#zhan').addClass('fa-thumbs-up');
+                          $('#zhan').text(obj.count)
+                    //alert("点赞成功");
+                    //location.reload();
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+
+                 }else{
+                     alert('您还没登录，点击OK即将登录');
+                     $('#myModal').modal();
+                 }
+
+
+                 }
+
+
+         });
+
+       }else{
+
+            $.ajax({
+             url:'/zhan/',
+             type:'POST',
+             data:{'add':"0",'article_id':$(".idcommment").attr("myid")},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+                 if(obj.islogin=='True'){
+                     if(obj.state){
+                           $('#zhan').removeClass('fa-thumbs-up');
+                           $('#zhan').addClass('fa-thumbs-o-up');
+                           $('#zhan').text(obj.count)
+                    //alert("点赞成功");
+                    //location.reload();
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+
+                 }else{
+                     alert('您还没登录，点击OK即将登录');
+                      $('#myModal').modal();
+                 }
+
+
+                 }
+
+
+         });
+
+
+
+
+
+
+
+
+        }
+
+
+
+  });
+
+
+ </script>
+
+
+<script>
+        $('.sent_button').click(function () {
+             if($('.mycomment').val()==""){
+                alert("不能发表空评论");
+             }else{
+                $.ajax({
+             url:'/insert_comment/',
+             type:'POST',
+             data:{'mycomment':$('.mycomment').val(),'article_id':$(".mycomment").attr("id")},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+                 if(obj.islogin=='True'){
+                     if(obj.state){
+                    alert("评论成功");
+                    location.reload();
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+
+                 }else{
+                     alert('您还没登录，点击OK即将登录');
+                      $('#myModal').modal();
+                 }
+
+
+                 }
+
+
+         })
+
+             }
+
+
+         });
+    </script>
+
+<script>
+
+
+
+
+
+
+
+
+
+
+       $('.send .faces').click( function () {
+
+           if (lanren.cur == 0) {
+               $('.faces').removeClass('on');
+               lanren.cur = 1;
+               $('.face').removeClass('showit');
+
+
+
+
+
+
+
+
+
+
+
+
+
+           } else if (lanren.cur == 1) {
+               $('.faces').addClass('on');
+               $('.face').addClass('showit');
+               lanren.cur = 0;
+           }
+       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+<script>
+
+
+
+   $('.send a.btn').on('click',function(){
+
+      if($('#content').html()==""){
+                alert("不能发表空评论");
+             }else{
+                $.ajax({
+             url:'/insert_comment/',
+             type:'POST',
+             data:{'mycomment':$('#content').html(),'article_id':$("#content").attr("myid")},
+             success:function (data) {
+                 var obj=JSON.parse(data);
+                 if(obj.islogin=='True'){
+                     if(obj.state){
+                    alert("评论成功");
+                    location.reload();
+                 }
+                 else {
+                     alert("请求出错");
+                 }
+
+                 }else{
+                     alert('您还没登录，点击OK即将登录');
+                      $('#myModal').modal();
+                 }
+
+
+                 }
+
+
+         })
+
+             }
+
+
+
+
+
+
+
+   });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  function renderEmoji()
+{
+var emos = getEmojiList()[0];//此处按需是否生成所有emoji
+            var html = '<div >常用表情</div><ul>';
+            for (var j = 0; j < emos.length; j++) {
+                var emo = emos[j];
+                var data = 'data:image/png;base64,' + emo[2];
+                if (j % 20 == 0) {
+                    html += '<li class="">';
+                } else {
+                    html += '<li>';
+
+                }
+                html += '<img style="width: 20px;height: 20px;" src="' + data + '"  unicode16="' + emo[1] + '" /></li>';
+
+            }
+
+   $('.face').html(html);
+
+
+//.......
+}
+renderEmoji();
+  var lanren = {
+           face: function (_this) {
+               var target = $(_this).html();
+               if (target.length < 5) {
+                   $(_this).html("<img src='/static/image/face/" + target + ".gif' />")
+               }
+           },
+           faceimg: '',
+           imgs: function (min, max) {
+               for (i = min; i < max; i++) {  //通过循环创建60个表情，可扩展
+                   lanren.faceimg += '<li><a href="javascript:void(0)"><img  src="/static/image/face/' + (i + 1) + '.gif" face="<emt>' + (i + 1) + '</emt>"/></a></li>';
+               }
+               ;
+           },
+           cur: 0
+       }
+
+
+       lanren.imgs(0, 60);
+
+       $('.face').append(lanren.faceimg);
+
+       $('.list li emt').each(function () {
+           lanren.face(this);
+       });
+
+   $('.face li img').click( function () {
+
+           var target = $(this).prop("outerHTML");
+           var pre = $('#content').html();//可以作为显示用
+           var showimg = target;
+           //alert(showimg);
+           $('#content').html(pre + showimg);//target对应showimg
+           //$(this).parents('.face').hide(0);
+          // $('.send .faces').removeClass('on');
+           $('.faces').addClass('on');
+           $('.face').addClass('showit');
+
+             lanren.cur = 0;
+           // lanren.face(this);
+       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+</html>

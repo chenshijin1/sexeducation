@@ -1,0 +1,60 @@
+{% extends 'headerbar.html' %}
+{% load staticfiles %} {% block main_content %}
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+
+                <div class="row">
+                    <div class="col-md-4">
+                    <p class="navbar-text">欢迎{{ user.nickname }}</p>
+                    </div>
+                </div>
+
+               <div class="row">
+
+			  <div class="col-md-6">
+			     <div class="panel panel-default">
+                 <div class="panel-body">
+                     {% for co in mymessage %}
+                         <div class="alert alert-info">
+									<strong></strong> <a href="/message/?id={{ co.message_id }}">来自{{ co.nickname }}的留言</a>
+								</div>
+                     {% endfor %}
+                 </div>
+                 </div>
+			  </div>
+
+
+            </div>
+
+
+
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+    </div>
+    <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    {% load staticfiles %}
+    <script src="{% static "assets/js/jquery-1.10.2.js" %}"></script>
+    <!-- Bootstrap Js -->
+    <script src="{% static "assets/js/bootstrap.min.js" %}"></script>
+
+    <!-- Metis Menu Js -->
+    <script src="{% static "assets/js/jquery.metisMenu.js" %}"></script>
+    <!-- Morris Chart Js -->
+    <script src="{% static "assets/js/morris/raphael-2.1.0.min.js" %}"></script>
+    <script src="{% static "assets/js/morris/morris.js" %}"></script>
+
+
+
+
+    <!-- Custom Js -->
+    <script src="{% static "assets/js/custom-scripts.js" %}"></script>
+
+
+</body>
+
+{% endblock %}
